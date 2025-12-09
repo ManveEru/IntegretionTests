@@ -2,93 +2,33 @@ package ru.manveru.integrationaltests.PrintMatrixTests;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class PrintMatrixTest extends PrintMatrixTestBase{
     
-    @Test
-    public void testAllParams() {
+    @ParameterizedTest(name = "[{index}] {2}")
+    @MethodSource("testDataProvider")
+    public void testParametrizedParams(
+                Map<String, Integer> requestParams,
+                String expectedString,
+                String testDescription) {
         //Data
-        Map<String, Integer> requestParams = Map.of(
-                "start", 2,
-                "end", 6,
-                "per_line", 5);
+        //prepareed in testDataProvider
         
         //Actions
         List<String> response = sendRequest(requestParams);
 
         //Assertions
-        assertEquals("2 3 4 5 6", response.get(0), "Response is incorrect");
+        assertEquals(expectedString, response.get(0), testDescription);
     }
-
-    @Test
-    public void testStartPerLineParams() {
-        //Data
-        Map<String, Integer> requestParams = Map.of(
-                "start", 96,
-                "per_line", 5);
-        
-        //Actions
-        List<String> response = sendRequest(requestParams);
-
-        //Assertions
-        assertEquals("96 97 98 99 100", response.get(0), "Response is incorrect");
-    }
-    
-    @Test
-    public void testStartEndParams() {
-        //Data
-        Map<String, Integer> requestParams = Map.of(
-                "start", 2,
-                "end", 11);
-        
-        //Actions
-        List<String> response = sendRequest(requestParams);
-            
-        //Assertions
-        assertEquals("2 3 4 5 6 7 8 9 10 11", response.get(0), "Response is incorrect");
-    }
-    
-    @Test
-    public void testEndPerLineParams() {
-        //Data
-        Map<String, Integer> requestParams = Map.of(
-                "end", 5,
-                "per_line", 5);
-        
-        //Actions
-        List<String> response = sendRequest(requestParams);
-            
-        //Assertions
-        assertEquals("1 2 3 4 5", response.get(0), "Response is incorrect");
-    }
-    
-    @Test
-    public void testStartParams() {
-        //Data
-        Map<String, Integer> requestParams = Map.of("start", 91);
-        
-        //Actions
-        List<String> response = sendRequest(requestParams);
-            
-        //Assertions
-        assertEquals("91 92 93 94 95 96 97 98 99 100", response.get(0), "Response is incorrect");
-    }
-    
-    @Test
-    public void testEndParams() {
-        //Data
-        Map<String, Integer> requestParams = Map.of("end", 10);
-        
-        //Actions
-        List<String> response = sendRequest(requestParams);
-            
-        //Assertions
-        assertEquals("1 2 3 4 5 6 7 8 9 10", response.get(0), "Response is incorrect");
-    }
-    
+  
     @Test
     public void testPerLineParams() {
         //Data
@@ -142,5 +82,33 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
         () -> assertEquals("5 6 0", response.get(1), "Second is incorrect"),
         () -> assertEquals(2, response.size(), "Line count is incorrect")
         );
+    }
+    
+    static Stream<Arguments> testDataProvider() {
+        return Stream.of(
+            arguments(
+                Map.of("start", 96, "per_line", 5),
+                "96 97 98 99 100",
+                "Print digits from start=96 to end=Default with 5 digits per_line"),
+            arguments(
+                Map.of("start", 2, "end", 11),
+                "2 3 4 5 6 7 8 9 10 11",
+                "Print digits from start=2 to end=11 with Default digits per_line"),
+            arguments(
+                Map.of("end", 5, "per_line", 5),
+                "0 2 3 4 5",
+                "Print digits from start=Default to end=5 with 5 digits per_line"),
+            arguments(
+                Map.of("start", 91),
+                "91 92 93 94 95 96 97 98 99 100",
+                "Print digits from start=91 to end=Default with Default digits per_line"),
+            arguments(
+                Map.of("end", 10),
+                "0 2 3 4 5 6 7 8 9 10",
+                "Print digits from start=Default to end=10 with Default digits per_line"),
+            arguments(
+                Map.of("start", 2, "end", 6, "per_line", 5),
+                "2 3 4 5 6",
+                "Print digits from start=2 to end=6 with 5 digits per_line"));
     }
 }
