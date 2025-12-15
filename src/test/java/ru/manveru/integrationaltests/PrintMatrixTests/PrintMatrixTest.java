@@ -1,20 +1,31 @@
 package ru.manveru.integrationaltests.PrintMatrixTests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@Epic("Операции с числами")
+@Feature("Вывод чисел построчно")
 public class PrintMatrixTest extends PrintMatrixTestBase{
     
     @ParameterizedTest(name = "[{index}] {2}")
+    @DisplayName("Параметризированный тест")
     @MethodSource("testDataProvider")
+    @Description("Проверка обработки различного количества параметров с выводом в одну строку")
+    @Tag("parametrized")
+    @Tag("Regress")
     public void testParametrizedParams(
                 Map<String, Integer> requestParams,
                 String expectedString,
@@ -30,6 +41,9 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     }
   
     @Test
+    @DisplayName("Количество символов в строке")
+    @Description("Проверка обработки одного параметра: количество цифр в строке")
+    @Tag("Regress")
     public void testPerLineParams() {
         //Data
         Map<String, Integer> requestParams = Map.of("per_line", 20);
@@ -46,6 +60,10 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     }
     
     @Test
+    @DisplayName("Параметры по умолчанию")
+    @Description("Проверка обработки запроса без параметров")
+    @Tag("Smoke")
+    
     public void testNoParams() {
         //Data
         Map<String, Integer> requestParams = Map.of();
@@ -67,6 +85,9 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     }
     
     @Test
+    @DisplayName("Дополнение нулями")
+    @Description("Проверка дополнения последней строки нулями, вывод в две строки")
+    @Tag("Smoke")
     public void testTwoLinesZeroBrace() {
         //Data
         Map<String, Integer> requestParams = Map.of(
@@ -84,6 +105,7 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
         );
     }
     
+    @DisplayName("Провайдер данных для параметризированных тестов")
     static Stream<Arguments> testDataProvider() {
         return Stream.of(
             arguments(
