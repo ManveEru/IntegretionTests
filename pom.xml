@@ -23,7 +23,7 @@
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
         <rest-assured.version>5.3.0</rest-assured.version>
         <allure.version>2.24.0</allure.version>
-        <aspectj.version>1.9.20.1</aspectj.version>
+        <aspectj.version>1.9.25</aspectj.version>
     </properties>
 
     <dependencies>
