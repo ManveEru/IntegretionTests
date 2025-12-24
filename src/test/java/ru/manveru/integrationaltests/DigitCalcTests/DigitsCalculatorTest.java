@@ -5,6 +5,8 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
+import io.restassured.response.Response;
+import java.util.Map;
 import ru.manveru.integrationaltests.model.DigitSumResponse;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +58,13 @@ public class DigitsCalculatorTest extends DigitCalculatorTestBase{
     
     @Step("Отправка запроса")
     private DigitSumResponse sendRequestStep(String requestParams){
-        return sendRequest(requestParams);
+        
+        Response response = apiHelper.sendGetRequest("/sum", Map.of("number", requestParams));
+        Allure.step("Проверка статуса ответа", () -> response.then().statusCode(200));
+        return response
+                .then()
+                .extract()
+                .as(DigitSumResponse.class);
     }
     
     @Step("Проверка ответа на запрос")

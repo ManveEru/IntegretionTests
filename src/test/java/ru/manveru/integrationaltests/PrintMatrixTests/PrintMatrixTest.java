@@ -5,6 +5,8 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
+import io.restassured.common.mapper.TypeRef;
+import io.restassured.response.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -29,7 +31,7 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     @Tag("parametrized")
     @Tag("Regress")
     public void testParametrizedParams(
-                Map<String, Integer> requestParams,
+                Map<String, String> requestParams,
                 String expectedString,
                 String testDescription) {
         //Data
@@ -48,7 +50,7 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     @Tag("Regress")
     public void testPerLineParams() {
         //Data
-        Map<String, Integer> requestParams = Map.of("per_line", 20);
+        Map<String, String> requestParams = Map.of("per_line", "20");
         
         //Actions
         List<String> response = sendRequestStep(requestParams);
@@ -70,7 +72,7 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     
     public void testNoParams() {
         //Data
-        Map<String, Integer> requestParams = Map.of();
+        Map<String, String> requestParams = Map.of();
         
         //Actions
         List<String> response = sendRequestStep(requestParams);
@@ -96,10 +98,10 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     @Tag("Smoke")
     public void testTwoLinesZeroBrace() {
         //Data
-        Map<String, Integer> requestParams = Map.of(
-                "start", 2,
-                "end", 6,
-                "per_line", 3);
+        Map<String, String> requestParams = Map.of(
+                "start", "2",
+                "end", "6",
+                "per_line", "3");
         
         //Actions
         List<String> response = sendRequestStep(requestParams);
@@ -112,35 +114,40 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     }
     
     @Step("Отправка запроса")
-    private List<String> sendRequestStep(Map<String, Integer> requestParams){
-        return sendRequest(requestParams);
+    private List<String> sendRequestStep(Map<String, String> requestParams){
+        Response response = apiHelper.sendGetRequest("/martix", requestParams);
+        Allure.step("Проверка статуса ответа", () -> response.then().statusCode(200));
+        return response
+                .then()
+                .extract()
+                .as(new TypeRef<List<String>>(){});
     }
     
     @DisplayName("Провайдер данных для параметризированных тестов")
     static Stream<Arguments> testDataProvider() {
         return Stream.of(
             arguments(
-                Map.of("start", 96, "per_line", 5),
+                Map.of("start", "96", "per_line", "5"),
                 "96 97 98 99 100",
                 "Print digits from start=96 to end=Default with 5 digits per_line"),
             arguments(
-                Map.of("start", 2, "end", 11),
+                Map.of("start", "2", "end", "11"),
                 "2 3 4 5 6 7 8 9 10 11",
                 "Print digits from start=2 to end=11 with Default digits per_line"),
             arguments(
-                Map.of("end", 5, "per_line", 5),
+                Map.of("end", "5", "per_line", "5"),
                 "0 2 3 4 5",
                 "Print digits from start=Default to end=5 with 5 digits per_line"),
             arguments(
-                Map.of("start", 91),
+                Map.of("start", "91"),
                 "91 92 93 94 95 96 97 98 99 100",
                 "Print digits from start=91 to end=Default with Default digits per_line"),
             arguments(
-                Map.of("end", 10),
+                Map.of("end", "10"),
                 "0 2 3 4 5 6 7 8 9 10",
                 "Print digits from start=Default to end=10 with Default digits per_line"),
             arguments(
-                Map.of("start", 2, "end", 6, "per_line", 5),
+                Map.of("start", "2", "end", "6", "per_line", "5"),
                 "2 3 4 5 6",
                 "Print digits from start=2 to end=6 with 5 digits per_line"));
     }
