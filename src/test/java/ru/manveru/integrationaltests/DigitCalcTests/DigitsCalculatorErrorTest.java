@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 import io.restassured.response.Response;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
-import static ru.manveru.integrationaltests.DigitCalcTests.DigitCalculatorTestBase.apiHelper;
+import ru.manveru.integrationaltests.BaseDigTest;
 
 @Epic("Операции с числами")
 @Feature("Подсчёт сумм цифр числа. Негативные проверки.")
-public class DigitsCalculatorErrorTest extends DigitCalculatorTestBase{
+public class DigitsCalculatorErrorTest extends BaseDigTest{
 
     @Test
     @DisplayName("Отсутствие входного параметра")

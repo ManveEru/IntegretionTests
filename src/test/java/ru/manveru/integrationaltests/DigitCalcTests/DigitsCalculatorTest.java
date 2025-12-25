@@ -13,10 +13,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
+import ru.manveru.integrationaltests.BaseDigTest;
 
 @Epic("Операции с числами")
 @Feature("Подсчёт сумм цифр числа")
-public class DigitsCalculatorTest extends DigitCalculatorTestBase{
+public class DigitsCalculatorTest extends BaseDigTest{
 
     @Test
     @DisplayName("Основной вариант запроса")

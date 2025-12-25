@@ -19,10 +19,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.manveru.integrationaltests.BaseDigTest;
 
 @Epic("Операции с числами")
 @Feature("Вывод чисел построчно")
-public class PrintMatrixTest extends PrintMatrixTestBase{
+public class PrintMatrixTest extends BaseDigTest{
     
     @ParameterizedTest(name = "[{index}] {2}")
     @DisplayName("Параметризированный тест")
@@ -115,7 +116,7 @@ public class PrintMatrixTest extends PrintMatrixTestBase{
     
     @Step("Отправка запроса")
     private List<String> sendRequestStep(Map<String, String> requestParams){
-        Response response = apiHelper.sendGetRequest("/martix", requestParams);
+        Response response = apiHelper.sendGetRequest("/matrix", requestParams);
         Allure.step("Проверка статуса ответа", () -> response.then().statusCode(200));
         return response
                 .then()
