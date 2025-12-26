@@ -24,6 +24,7 @@ public class DigitsCalculatorTest extends BaseDigTest{
     @Description("Подсчёт суммы цифр числа, суммы нечётных цифр числа, поиск максимальной цифры числа")
     @Tag("Regress")
     public void testDigitsSum() {
+        logger.info("START");
         DigitSumResponse response = sendRequestStep("12345");
 
         responseAsserts(15, 9, 5, response);
@@ -34,6 +35,7 @@ public class DigitsCalculatorTest extends BaseDigTest{
     @Description("Корректная работа алгоритма для 0")
     @Tag("Regress")
     public void testDigitsSumOfZero() {
+        logger.info("START");
         DigitSumResponse response = sendRequestStep("0");
 
          responseAsserts(0, 0, 0, response);
@@ -43,6 +45,7 @@ public class DigitsCalculatorTest extends BaseDigTest{
     @DisplayName("Обработка одно циферного числа")
     @Description("Корректная работа алгоритма для числа из одной цифры")
     public void testOddDigitsSum() {
+        logger.info("START");
         DigitSumResponse response = sendRequestStep("7");
 
         responseAsserts(7, 7, 7, response);
@@ -52,6 +55,7 @@ public class DigitsCalculatorTest extends BaseDigTest{
     @DisplayName("Одноциферное чётное число")
     @Description("Для числа из одной чётной цифры сумма нечётных цифр = 0")
     public void testEvenDigitsSum() {
+        logger.info("START");
         DigitSumResponse response = sendRequestStep("8");
 
         responseAsserts(8, 0, 8, response);

@@ -24,6 +24,7 @@
         <rest-assured.version>5.3.0</rest-assured.version>
         <allure.version>2.24.0</allure.version>
         <aspectj.version>1.9.25</aspectj.version>
+        <logback.version>1.4.14</logback.version>
     </properties>
 
     <dependencies>
@@ -84,6 +85,12 @@
             <type>jar</type>
         </dependency>
         
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
