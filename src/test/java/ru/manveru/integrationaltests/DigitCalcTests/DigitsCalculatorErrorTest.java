@@ -10,17 +10,19 @@ import org.junit.jupiter.api.Test;
 import io.restassured.response.Response;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import ru.manveru.integrationaltests.BaseDigTest;
+import ru.manveru.integrationaltests.Extentions.LoggingExtension;
 
 @Epic("Операции с числами")
 @Feature("Подсчёт сумм цифр числа. Негативные проверки.")
+@ExtendWith(LoggingExtension.class)
 public class DigitsCalculatorErrorTest extends BaseDigTest{
 
     @Test
     @DisplayName("Отсутствие входного параметра")
     @Description("При отсутствии входного параметра запрос завершается с кодом 400")
     public void testMissingParameter() {
-        logger.info("START");
         Response response = apiHelper.sendGetRequest("/sum", Map.of());
         Allure.step("Проверка статуса ответа", () -> response.then().statusCode(400));
     }
@@ -29,7 +31,6 @@ public class DigitsCalculatorErrorTest extends BaseDigTest{
     @DisplayName("Входной параметр не число")
     @Description("Если входной параметр не число, то запрос завершается с кодом 400")
     public void testInvalidParameterString() {
-        logger.info("START");
         sendRequestStep("not-a-number");
     }
     
@@ -37,7 +38,6 @@ public class DigitsCalculatorErrorTest extends BaseDigTest{
     @DisplayName("Входной параметр - вещественное число")
     @Description("Если входной параметр вещественное число, то запрос завершается с кодом 400")
     public void testInvalidParameterFloat() {
-        logger.info("START");
         sendRequestStep("17.28");
     }
     
@@ -45,7 +45,6 @@ public class DigitsCalculatorErrorTest extends BaseDigTest{
     @DisplayName("Входной параметр - отрицательное число")
     @Description("Если входной параметр отрицательное число, то запрос завершается с кодом 400")
     public void testInvalidParameterLessThenZero() {
-        logger.info("START");
         sendRequestStep("-17");
     }
     

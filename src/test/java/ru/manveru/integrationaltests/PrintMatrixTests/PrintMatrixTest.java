@@ -15,14 +15,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.manveru.integrationaltests.BaseDigTest;
+import ru.manveru.integrationaltests.Extentions.LoggingExtension;
 
 @Epic("Операции с числами")
 @Feature("Вывод чисел построчно")
+@ExtendWith(LoggingExtension.class)
 public class PrintMatrixTest extends BaseDigTest{
     
     @ParameterizedTest(name = "[{index}] {2}")
@@ -35,16 +38,13 @@ public class PrintMatrixTest extends BaseDigTest{
                 Map<String, String> requestParams,
                 String expectedString,
                 String testDescription) {
-        logger.info("START (" + testDescription + ")");
         //Data
         //prepareed in testDataProvider
         
         //Actions
-        logger.debug("Send request");
         List<String> response = sendRequestStep(requestParams);
 
         //Assertions
-        logger.debug("Make assertions");
         Allure.step("Проверка ответа запроса", () -> assertEquals(expectedString, response.get(0), testDescription));
     }
   
@@ -53,17 +53,13 @@ public class PrintMatrixTest extends BaseDigTest{
     @Description("Проверка обработки одного параметра: количество цифр в строке")
     @Tag("Regress")
     public void testPerLineParams() {
-        logger.info("START");
         //Data
-        logger.debug("Make data for request");
         Map<String, String> requestParams = Map.of("per_line", "20");
         
         //Actions
-        logger.debug("Send request");
         List<String> response = sendRequestStep(requestParams);
             
         //Assertions
-        logger.debug("Make assertions");
         Allure.step("Проверка ответа запроса", () -> assertAll(
             () -> Allure.step("В первой строке цифры от 1 до 20", () -> assertEquals("1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20", response.get(0))),
             () -> Allure.step("Во второй строке цифры от 21 до 30", () -> assertEquals("21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40", response.get(1))),
@@ -79,17 +75,13 @@ public class PrintMatrixTest extends BaseDigTest{
     @Tag("Smoke")
     
     public void testNoParams() {
-        logger.info("START");
         //Data
-        logger.debug("Make data for request");
         Map<String, String> requestParams = Map.of();
         
         //Actions
-        logger.debug("Send request");
         List<String> response = sendRequestStep(requestParams);
             
         //Assertions
-        logger.debug("Make assertions");
         Allure.step("Проверка ответа запроса", () -> assertAll(
             () -> Allure.step("В первой строке цифры от 1 до 10", () -> assertEquals("1 2 3 4 5 6 7 8 9 10", response.get(0))),
             () -> Allure.step("Во второй строке цифры от 11 до 20", () -> assertEquals("11 12 13 14 15 16 17 18 19 20", response.get(1))),
@@ -109,20 +101,16 @@ public class PrintMatrixTest extends BaseDigTest{
     @Description("Проверка дополнения последней строки нулями, вывод в две строки")
     @Tag("Smoke")
     public void testTwoLinesZeroBrace() {
-        logger.info("START");
         //Data
-        logger.debug("Make data for request");
         Map<String, String> requestParams = Map.of(
                 "start", "2",
                 "end", "6",
                 "per_line", "3");
         
         //Actions
-        logger.debug("Send request");
         List<String> response = sendRequestStep(requestParams);
 
         //Assertions
-        logger.debug("Make assertions");
         Allure.step("Проверка ответа запроса", () -> assertAll(
         () -> Allure.step("Вторая строка дополнена нулями", () -> assertEquals("5 6 0", response.get(1))),
         () -> Allure.step("В ответе 2 строки", () -> assertEquals(2, response.size()))
