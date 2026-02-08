@@ -38,7 +38,7 @@ public class LoggingExtension implements TestWatcher, BeforeAllCallback, AfterAl
     @Override
     public void testSuccessful(ExtensionContext context) {
         String testName = context.getDisplayName();
-        logger.info("Тест '{}' УСПЕШНО завершен", testName);
+        logger.info("Test '{}' successfully end", testName);
         testResults.add(new TestResult(testName, TestStatus.SUCCESSFUL, null));
     }
     
@@ -56,21 +56,21 @@ public class LoggingExtension implements TestWatcher, BeforeAllCallback, AfterAl
         String testName = context.getDisplayName();
         String disableReason = reason.orElse("Причина не указана");
         
-        logger.info("Тест '{}' ОТКЛЮЧЕН. Причина: {}", testName, disableReason);
+        logger.info("Tets '{}' disabled. Reason: {}", testName, disableReason);
         testResults.add(new TestResult(testName, TestStatus.DISABLED, null));
     }
     
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
         String className = context.getDisplayName();
-        logger.info("Начало выполнения тестового класса: {}", className);
-        logger.info("Теги тестов: {}", context.getTags());
+        logger.info("Test scoupe start: {}", className);
+        logger.info("Test's tags: {}", context.getTags());
     }
     
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
         String className = context.getDisplayName();
-        logger.info("Завершение выполнения тестового класса: {}", className);
+        logger.info("Test scoupe end: {}", className);
         
         // Генерация отчета по результатам
         generateTestReport();
@@ -78,7 +78,7 @@ public class LoggingExtension implements TestWatcher, BeforeAllCallback, AfterAl
     
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        logger.info("Начало теста: {}", context.getDisplayName());
+        logger.info("Test begin: {}", context.getDisplayName());
         // Можно замерить время начала
         context.getStore(ExtensionContext.Namespace.GLOBAL)
                .put(context.getUniqueId(), System.currentTimeMillis());
@@ -90,12 +90,12 @@ public class LoggingExtension implements TestWatcher, BeforeAllCallback, AfterAl
                                 .remove(context.getUniqueId(), Long.class);
         if (startTime != null) {
             long duration = System.currentTimeMillis() - startTime;
-            logger.info("Тест '{}' выполнен за {} мс", 
+            logger.info("Test '{}' done by {} мс", 
                 context.getDisplayName(), duration);
             
             // Логирование медленных тестов
             if (duration > 5000) { // 5 секунд
-                logger.warn("Тест '{}' выполняется долго: {} мс", 
+                logger.warn("Test '{}' running much: {} ms", 
                     context.getDisplayName(), duration);
             }
         }
@@ -103,7 +103,7 @@ public class LoggingExtension implements TestWatcher, BeforeAllCallback, AfterAl
     
     private void generateTestReport() {
         if (testResults.isEmpty()) {
-            logger.info("Нет результатов тестов для отчета");
+            logger.info("There is no test result for report");
             return;
         }
         
@@ -114,11 +114,11 @@ public class LoggingExtension implements TestWatcher, BeforeAllCallback, AfterAl
                 Collectors.counting()
             ));
         
-        logger.info("ОТЧЕТ ПО ТЕСТАМ:");
-        logger.info("Всего тестов: {}", testResults.size());
-        logger.info("Успешных: {}", statistics.getOrDefault(TestStatus.SUCCESSFUL, 0L));
-        logger.info("Проваленных: {}", statistics.getOrDefault(TestStatus.FAILED, 0L));
-        logger.info("Отключенных: {}", statistics.getOrDefault(TestStatus.DISABLED, 0L));
+        logger.info("TEST REPORT:");
+        logger.info("Tests at all: {}", testResults.size());
+        logger.info("Susccessful: {}", statistics.getOrDefault(TestStatus.SUCCESSFUL, 0L));
+        logger.info("Failed: {}", statistics.getOrDefault(TestStatus.FAILED, 0L));
+        logger.info("Disabled: {}", statistics.getOrDefault(TestStatus.DISABLED, 0L));
         
         // Детали по проваленным тестам
         List<TestResult> failedTests = testResults.stream()
@@ -126,7 +126,7 @@ public class LoggingExtension implements TestWatcher, BeforeAllCallback, AfterAl
             .collect(Collectors.toList());
         
         if (!failedTests.isEmpty()) {
-            logger.info("Проваленные тесты:");
+            logger.info("Failed tests:");
             failedTests.forEach(tr -> 
                 logger.info("  - {}: {}", tr.testName, 
                     tr.cause != null ? tr.cause.getMessage() : "без сообщения")
