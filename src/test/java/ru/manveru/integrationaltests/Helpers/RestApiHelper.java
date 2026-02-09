@@ -26,7 +26,7 @@ public class RestApiHelper {
             for (Map.Entry<String, String> param : requestParams.entrySet()){
                 request.param(param.getKey(), param.getValue());
             }
-        logger.debug("Sent request on " + endpoint);
-        return request.log().uri().when().get(endpoint);
+        logger.debug("Sent request to {} with params {}", endpoint, requestParams);
+        return request.log().uri().log().params().when().get(endpoint);
     }
 }
