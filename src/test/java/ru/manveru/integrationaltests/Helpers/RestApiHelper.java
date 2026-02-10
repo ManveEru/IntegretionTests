@@ -1,5 +1,6 @@
 package ru.manveru.integrationaltests.Helpers;
 
+import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -12,7 +13,12 @@ public class RestApiHelper {
     private static RestApiHelper instance;
     private static final Logger logger = LoggerFactory.getLogger(LoggingExtension.class);
     
-    private RestApiHelper(){logger.info("\n**********Helper created.***************\n");};
+    private RestApiHelper(){
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 8080;
+        RestAssured.basePath = "/digits";
+        logger.info("**********Helper created.***************");
+    };
     
     public static RestApiHelper getInstance(){
         if (instance == null)
