@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.manveru.integrationaltests.Helpers.RestApiHelper;
 
-public class BaseDigTest {
+public class BaseTest {
     public static RestApiHelper apiHelper;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     

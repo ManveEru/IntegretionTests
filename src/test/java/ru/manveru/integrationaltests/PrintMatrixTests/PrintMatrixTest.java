@@ -20,13 +20,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.manveru.integrationaltests.BaseDigTest;
+import ru.manveru.integrationaltests.BaseTest;
 import ru.manveru.integrationaltests.Extentions.LoggingExtension;
 
 @Epic("Операции с числами")
 @Feature("Вывод чисел построчно")
 @ExtendWith(LoggingExtension.class)
-public class PrintMatrixTest extends BaseDigTest{
+public class PrintMatrixTest extends BaseTest{
     
     @ParameterizedTest(name = "[{index}] {2}")
     @DisplayName("Параметризированный тест")
