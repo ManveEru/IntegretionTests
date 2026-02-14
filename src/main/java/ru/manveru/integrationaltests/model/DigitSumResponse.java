@@ -1,8 +1,7 @@
 package ru.manveru.integrationaltests.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class DigitSumResponse {
     private int totalSum;
     private int oddSum;
