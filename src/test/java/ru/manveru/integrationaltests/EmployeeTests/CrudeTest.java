@@ -12,15 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import ru.manveru.integrationaltests.BaseDbTest;
 import static ru.manveru.integrationaltests.BaseTest.apiHelper;
 import ru.manveru.integrationaltests.DTO.Employee;
-import ru.manveru.integrationaltests.Extentions.LoggingExtension;
 
 @Epic("Кадровый учёт")
 @Feature("Сотрудники")
-@ExtendWith(LoggingExtension.class)
 public class CrudeTest extends BaseDbTest{
     
     @Test

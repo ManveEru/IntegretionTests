@@ -5,11 +5,10 @@ import org.junit.jupiter.api.BeforeAll;
 import ru.manveru.integrationaltests.Repositories.EmployeeJdbcRepository;
 
 public class BaseDbTest extends BaseTest{
-    public static EmployeeJdbcRepository employeeRepo;
+    public static EmployeeJdbcRepository employeeRepo = EmployeeJdbcRepository.getInstance();
     
     @BeforeAll
     public static void setup() {
         RestAssured.basePath = "/api/employees";
-        employeeRepo = EmployeeJdbcRepository.getInstance();
     }
 }

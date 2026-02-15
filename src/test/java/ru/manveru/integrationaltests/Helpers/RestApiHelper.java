@@ -16,7 +16,6 @@ public class RestApiHelper {
     private RestApiHelper(){
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 8080;
-        RestAssured.basePath = "/digits";
         logger.info("**********Helper created.***************");
     };
     

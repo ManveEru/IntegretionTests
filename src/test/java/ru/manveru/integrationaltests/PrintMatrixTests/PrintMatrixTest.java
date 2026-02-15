@@ -15,18 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.manveru.integrationaltests.BaseTest;
-import ru.manveru.integrationaltests.Extentions.LoggingExtension;
+import ru.manveru.integrationaltests.BaseDigitTest;
 
 @Epic("Операции с числами")
 @Feature("Вывод чисел построчно")
-@ExtendWith(LoggingExtension.class)
-public class PrintMatrixTest extends BaseTest{
+public class PrintMatrixTest extends BaseDigitTest{
     
     @ParameterizedTest(name = "[{index}] {2}")
     @DisplayName("Параметризированный тест")

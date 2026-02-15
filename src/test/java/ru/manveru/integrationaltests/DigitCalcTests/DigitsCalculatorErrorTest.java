@@ -10,14 +10,11 @@ import org.junit.jupiter.api.Test;
 import io.restassured.response.Response;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
-import ru.manveru.integrationaltests.BaseTest;
-import ru.manveru.integrationaltests.Extentions.LoggingExtension;
+import ru.manveru.integrationaltests.BaseDigitTest;
 
 @Epic("Операции с числами")
 @Feature("Подсчёт сумм цифр числа. Негативные проверки.")
-@ExtendWith(LoggingExtension.class)
-public class DigitsCalculatorErrorTest extends BaseTest{
+public class DigitsCalculatorErrorTest extends BaseDigitTest{
 
     @Test
     @DisplayName("Отсутствие входного параметра")
