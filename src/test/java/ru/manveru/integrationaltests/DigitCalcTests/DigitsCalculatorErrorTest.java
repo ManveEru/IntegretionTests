@@ -10,7 +10,10 @@ import org.junit.jupiter.api.Test;
 import io.restassured.response.Response;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import ru.manveru.integrationaltests.BaseDigitTest;
+import ru.manveru.integrationaltests.Helpers.RequestParams;
 
 @Epic("Операции с числами")
 @Feature("Подсчёт сумм цифр числа. Негативные проверки.")
@@ -20,35 +23,28 @@ public class DigitsCalculatorErrorTest extends BaseDigitTest{
     @DisplayName("Отсутствие входного параметра")
     @Description("При отсутствии входного параметра запрос завершается с кодом 400")
     public void testMissingParameter() {
-        Response response = apiHelper.sendGetRequest("/sum", Map.of());
+        RequestParams params = RequestParams.get("/sum")
+                .withQueryParams(Map.of())
+                .build();
+        Response response = apiHelper.sendRequest(params);
         Allure.step("Проверка статуса ответа", () -> response.then().statusCode(400));
     }
 
-    @Test
-    @DisplayName("Входной параметр не число")
-    @Description("Если входной параметр не число, то запрос завершается с кодом 400")
-    public void testInvalidParameterString() {
-        sendRequestStep("not-a-number");
-    }
-    
-    @Test
-    @DisplayName("Входной параметр - вещественное число")
-    @Description("Если входной параметр вещественное число, то запрос завершается с кодом 400")
-    public void testInvalidParameterFloat() {
-        sendRequestStep("17.28");
-    }
-    
-    @Test
-    @DisplayName("Входной параметр - отрицательное число")
-    @Description("Если входной параметр отрицательное число, то запрос завершается с кодом 400")
-    public void testInvalidParameterLessThenZero() {
-        sendRequestStep("-17");
+    @ParameterizedTest(name = "[{index}] {1}")
+    @DisplayName("Параметризированный тест сумм")
+    @CsvSource({"not-a-number, Not a number test",
+        "17.28, Float number test", 
+        "-17, Negative number test"})
+    public void testInvalidParameters(String param, String description) {
+        sendRequestStep(param);
     }
     
     @Step("Отправка запроса")
     private void sendRequestStep(String requestParams){
-        
-        Response response = apiHelper.sendGetRequest("/sum", Map.of("number", requestParams));
+        RequestParams params = RequestParams.get("/sum")
+                .withQueryParams(Map.of("number", requestParams))
+                .build();
+        Response response = apiHelper.sendRequest(params);
         Allure.step("Проверка статуса ответа", () -> response.then().statusCode(400));
     }
 }

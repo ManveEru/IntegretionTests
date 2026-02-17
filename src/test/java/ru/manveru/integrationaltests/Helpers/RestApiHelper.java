@@ -25,13 +25,72 @@ public class RestApiHelper {
         return instance;
     }
     
-    public Response sendGetRequest (String endpoint, Map<String, String> requestParams) {
+    /**
+     * Send REST API request
+     * @param requestParams requests parameters (body, endpoint, query params, type)
+     * @return jbject with response
+     */
+    public Response sendRequest (RequestParams requestParams) {
         RequestSpecification request = given();
-        if (requestParams != null && !requestParams.isEmpty())
-            for (Map.Entry<String, String> param : requestParams.entrySet()){
+        
+        addQueryParams(request, requestParams.getQueryParams());
+        if (requestParams.getBody() != null && supportsBody(requestParams.getType())) {
+            request.body(requestParams.getBody());
+            request.contentType("application/json");
+        }
+        logRequest(requestParams);
+        switch (requestParams.getType()) {
+            case GET -> {
+                return request.log().uri().log().params().when()
+                        .get(requestParams.getEndpoint());
+            }
+            case POST -> {
+                return request.log().uri().log().body().when()
+                        .post(requestParams.getEndpoint());
+            }
+            case PUT -> {
+                return request.log().uri().log().body().when()
+                        .put(requestParams.getEndpoint());
+            }
+            case PATCH -> {
+                return request.log().uri().log().body().when()
+                        .patch(requestParams.getEndpoint());
+            }
+            case DELETE -> {
+                return request.log().uri().log().all().when()
+                        .delete(requestParams.getEndpoint());
+            }
+            default -> throw new IllegalArgumentException("Unsupported request type: " + requestParams.getType());
+        }
+    }
+    
+    // Add path-parameters to request
+    private void addQueryParams(RequestSpecification request, Map<String, String> queryParams) {
+        if (queryParams != null && !queryParams.isEmpty()) {
+            for (Map.Entry<String, String> param : queryParams.entrySet()) {
                 request.param(param.getKey(), param.getValue());
             }
-        logger.debug("Sent request to {} with params {}", endpoint, requestParams);
-        return request.log().uri().log().params().when().get(endpoint);
+        }
+    }
+    
+    // Check support body by request
+    private boolean supportsBody(RequestType type) {
+        return type == RequestType.POST || 
+               type == RequestType.PUT || 
+               type == RequestType.PATCH;
+    }
+    
+    private void logRequest(RequestParams requestParams) {
+        logger.debug("Sending {} request to {}", 
+                    requestParams.getType(), 
+                    requestParams.getEndpoint());
+        
+        if (requestParams.getQueryParams() != null && !requestParams.getQueryParams().isEmpty()) {
+            logger.debug("Query params: {}", requestParams.getQueryParams());
+        }
+        
+        if (requestParams.getBody() != null && supportsBody(requestParams.getType())) {
+            logger.debug("Request body: {}", requestParams.getBody());
+        }
     }
 }

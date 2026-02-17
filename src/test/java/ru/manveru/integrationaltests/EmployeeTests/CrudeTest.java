@@ -7,6 +7,7 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.sql.SQLException;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import ru.manveru.integrationaltests.BaseDbTest;
 import static ru.manveru.integrationaltests.BaseTest.apiHelper;
 import ru.manveru.integrationaltests.DTO.Employee;
+import ru.manveru.integrationaltests.Helpers.RequestParams;
 
 @Epic("Кадровый учёт")
 @Feature("Сотрудники")
@@ -38,7 +40,8 @@ public class CrudeTest extends BaseDbTest{
     private Employee sendRequestStep(String id){
         
         String endpoint = id != null ? "/" + id : "";
-        Response response = apiHelper.sendGetRequest(endpoint, null);
+        RequestParams params = RequestParams.get(endpoint).build();
+        Response response = apiHelper.sendRequest(params);
         Allure.step("Проверка статуса ответа", () -> response.then().statusCode(200));
         return response
                 .then()

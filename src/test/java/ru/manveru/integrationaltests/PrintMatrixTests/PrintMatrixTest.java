@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.manveru.integrationaltests.BaseDigitTest;
+import ru.manveru.integrationaltests.Helpers.RequestParams;
 
 @Epic("Операции с числами")
 @Feature("Вывод чисел построчно")
@@ -116,7 +117,10 @@ public class PrintMatrixTest extends BaseDigitTest{
     
     @Step("Отправка запроса")
     private List<String> sendRequestStep(Map<String, String> requestParams){
-        Response response = apiHelper.sendGetRequest("/matrix", requestParams);
+        RequestParams params = RequestParams.get("/matrix")
+                .withQueryParams(requestParams)
+                .build();
+        Response response = apiHelper.sendRequest(params);
         Allure.step("Проверка статуса ответа", () -> response.then().statusCode(200));
         return response
                 .then()
