@@ -1,5 +1,7 @@
 package ru.manveru.integrationaltests.DTO;
 
+import java.util.Objects;
+
 public class Employee {
     private int id;
     private String name;
@@ -37,5 +39,22 @@ public class Employee {
     public String toString() {
         return String.format("Employee[id=%d, name='%s', surname='%s', department='%s', salary=%d]", 
             id, name, surname, department, salary);
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return id == employee.id &&
+           Double.compare(employee.salary, salary) == 0 &&
+           Objects.equals(name, employee.name) &&
+           Objects.equals(surname, employee.surname) &&
+           Objects.equals(department, employee.department);
+}
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname, department, salary);
     }
 }
