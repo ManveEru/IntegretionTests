@@ -1,5 +1,7 @@
 package ru.manveru.integrationaltests.Repositories;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +11,12 @@ import ru.manveru.integrationaltests.DTO.Employee;
 import ru.manveru.integrationaltests.Extentions.LoggingExtension;
 
 public class EmployeeJdbcRepository {
-    private static final String URL = "jdbc:postgresql://localhost:5432/my_db";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "WenCoda";
+//    private static final String URL = "jdbc:postgresql://localhost:5432/my_db";
+//    private static final String USER = "postgres";
+//    private static final String PASSWORD = "WenCoda";
     private static final Logger logger = LoggerFactory.getLogger(LoggingExtension.class);
     private static EmployeeJdbcRepository instance;
+    private static final HikariDataSource dataSource;
     
     public static EmployeeJdbcRepository getInstance(){
         if (instance == null)
@@ -21,9 +24,21 @@ public class EmployeeJdbcRepository {
         return instance;
     }
     
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:postgresql://localhost:5432/my_db");
+        config.setUsername("postgres");
+        config.setPassword("WenCoda");
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(2);
+        config.setConnectionTimeout(30000);
+        
+        dataSource = new HikariDataSource(config);
+    }
+    
     private Connection getConnection() throws SQLException {
         logger.debug("Connect to DB");
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        return dataSource.getConnection();
     }
     
     public int ceate(Employee employee) throws SQLException{
