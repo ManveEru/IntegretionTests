@@ -7,11 +7,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.manveru.integrationaltests.DTO.Employee;
-import ru.manveru.integrationaltests.Extentions.LoggingExtension;
 
 public class EmployeeJdbcRepository extends AbstractJdbcRepository<Employee>{
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingExtension.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeJdbcRepository.class);
     private static EmployeeJdbcRepository instance;
     private final HikariConnectionPool cp;
     private final AtomicInteger connectionRequests = new AtomicInteger(0);
