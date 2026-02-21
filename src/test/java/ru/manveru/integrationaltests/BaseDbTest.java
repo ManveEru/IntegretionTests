@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import ru.manveru.integrationaltests.Repositories.EmployeeJdbcRepository;
 
 public class BaseDbTest extends BaseTest{
-    public static EmployeeJdbcRepository employeeRepo = EmployeeJdbcRepository.getInstance();
+    public static EmployeeJdbcRepository employeeRepo = EmployeeJdbcRepository.getInstance(connectionPool);
     
     @BeforeAll
     public static void setup() {
