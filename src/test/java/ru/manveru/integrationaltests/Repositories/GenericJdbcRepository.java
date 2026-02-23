@@ -4,9 +4,11 @@ import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenericJdbcRepository<T> {
-    
+    private static final Logger logger = LoggerFactory.getLogger(GenericJdbcRepository.class);
     private final Class<T> entityClass;
     private final String tableName;
     private final HikariConnectionPool connectionPool;
@@ -17,6 +19,7 @@ public class GenericJdbcRepository<T> {
         this.tableName = tableName;
         this.connectionPool = connectionPool;
         initFieldMap();
+        logger.info("************Repository created**********");
     }
 
     private void initFieldMap() {
@@ -65,6 +68,46 @@ public class GenericJdbcRepository<T> {
             return rs.next() ? mapResultSetToEntity(rs) : null;
         }
     }
+    
+    //Find all
+    public List<T> findAll() throws SQLException {
+        List<T> entity = new ArrayList<>();
+        String sql = String.format("SELECT * FROM %s", tableName);
+        
+        try(Connection conn = connectionPool.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            while(rs.next())
+                entity.add(mapResultSetToEntity(rs));
+        }
+        return entity;
+    }
+    
+    //Update
+    public boolean update(T entity) throws SQLException, IllegalAccessException {
+        List<Field> fields = getFieldsWithoutId();
+        String updateString = getUpdateString(fields);
+        Field idField = getIdField();
+        String sql = String.format("UPDATE %s SET %s WHERE id = ?", tableName, updateString);
+        
+        try(Connection conn = connectionPool.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            setParameters(stmt, entity, fields, 1);
+            stmt.setObject(fields.size() + 1, idField.get(entity));
+            return stmt.executeUpdate() > 0;
+        }
+    }
+    
+    //Delete
+    public boolean delete(int id) throws SQLException {
+        String sql = String.format("DELETE FROM %s WHERE id = ?", tableName);
+        
+        try(Connection conn = connectionPool.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        }
+    }
 
     private List<Field> getFieldsWithoutId() {
         List<Field> fields = new ArrayList<>();
@@ -80,6 +123,12 @@ public class GenericJdbcRepository<T> {
     private String getColumnsString(List<Field> fields) {
         return fields.stream()
                 .map(f -> f.getName().toLowerCase())
+                .collect(Collectors.joining(", "));
+    }
+    
+    private String getUpdateString(List<Field> fields) {
+        return fields.stream()
+                .map(f -> String.format("%s = ?", f.getName().toLowerCase()))
                 .collect(Collectors.joining(", "));
     }
 
