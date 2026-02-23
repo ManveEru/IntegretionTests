@@ -3,13 +3,12 @@ package ru.manveru.integrationaltests;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
 import ru.manveru.integrationaltests.DTO.Employee;
-import ru.manveru.integrationaltests.Repositories.EmployeeJdbcRepository;
-import ru.manveru.integrationaltests.Repositories.GenericJdbcRepository;
+import ru.manveru.integrationaltests.Repositories.AnnotatedJdbcRepository;
 
 public class BaseDbTest extends BaseTest{
     //public static EmployeeJdbcRepository employeeRepo = EmployeeJdbcRepository.getInstance(connectionPool);
-    public GenericJdbcRepository<Employee> employeeRepo = new GenericJdbcRepository(Employee.class, "employees", connectionPool);
-    
+    //public GenericJdbcRepository<Employee> employeeRepo = new GenericJdbcRepository(Employee.class, "employees", connectionPool);
+    public AnnotatedJdbcRepository<Employee> employeeRepo = factory.getRepository(Employee.class);//new AnnotatedJdbcRepository(Employee.class, connectionPool);
     @BeforeAll
     public static void setup() {
         RestAssured.basePath = "/api/employees";

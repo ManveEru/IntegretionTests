@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class GenericJdbcRepository<T> {
     private static final Logger logger = LoggerFactory.getLogger(GenericJdbcRepository.class);
-    private final Class<T> entityClass;
+    protected final Class<T> entityClass;
     private final String tableName;
     private final HikariConnectionPool connectionPool;
     private final Map<String, Field> fieldMap = new HashMap<>();
@@ -109,7 +109,7 @@ public class GenericJdbcRepository<T> {
         }
     }
 
-    private List<Field> getFieldsWithoutId() {
+    protected List<Field> getFieldsWithoutId() {
         List<Field> fields = new ArrayList<>();
         for(Field field : entityClass.getDeclaredFields()){
             if(!field.getName().equalsIgnoreCase("id")){
