@@ -13,14 +13,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.ExtendWith;
-import ru.manveru.integrationaltests.BaseTest;
-import ru.manveru.integrationaltests.Extentions.LoggingExtension;
+import ru.manveru.integrationaltests.BaseDigitTest;
+import ru.manveru.integrationaltests.Helpers.RequestParams;
 
 @Epic("Операции с числами")
 @Feature("Подсчёт сумм цифр числа")
-@ExtendWith(LoggingExtension.class)
-public class DigitsCalculatorTest extends BaseTest{
+
+public class DigitsCalculatorTest extends BaseDigitTest{
 
     @Test
     @DisplayName("Основной вариант запроса")
@@ -63,7 +62,10 @@ public class DigitsCalculatorTest extends BaseTest{
     @Step("Отправка запроса")
     private DigitSumResponse sendRequestStep(String requestParams){
         
-        Response response = apiHelper.sendGetRequest("/sum", Map.of("number", requestParams));
+        RequestParams params = RequestParams.get("/sum")
+                .withQueryParams(Map.of("number", requestParams))
+                .build();
+        Response response = apiHelper.sendRequest(params);
         Allure.step("Проверка статуса ответа", () -> response.then().statusCode(200));
         return response
                 .then()

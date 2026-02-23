@@ -21,7 +21,7 @@
         <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%-5level] [%msg]%n</pattern>
     </encoder>
 </appender>
-    
+
     <!-- Настройки уровня логирования -->
     <root level="DEBUG">
         <appender-ref ref="CONSOLE" />
