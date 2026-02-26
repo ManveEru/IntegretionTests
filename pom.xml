@@ -146,6 +146,35 @@
                     <generator>
                         <!-- Указываем, что генерируемый код будет на Java (это значение по умолчанию, но лучше указать явно) -->
                         <name>org.jooq.codegen.JavaGenerator</name>
+                        
+                        <strategy>
+                            <name>org.jooq.codegen.DefaultGeneratorStrategy</name>
+                            <matchers>
+                                <tables>
+                                    <table>
+                                        <!-- Настройка для класса таблицы -->
+                                        <tableClass>
+                                            <expression>$0</expression>
+                                        </tableClass>
+                            
+                                        <!-- Настройка для POJO класса - добавляем суффикс Pojo -->
+                                        <pojoClass>
+                                            <expression>$0Pojo</expression>
+                                        </pojoClass>
+                            
+                                        <!-- Настройка для Record класса -->
+                                        <recordClass>
+                                            <expression>$0Record</expression>
+                                        </recordClass>
+                            
+                                        <!-- Настройка для DAO класса -->
+                                        <daoClass>
+                                            <expression>$0Dao</expression>
+                                        </daoClass>
+                                    </table>
+                                </tables>
+                            </matchers>
+                        </strategy>
 
                         <!-- Конфигурация базы данных: указываем jOOQ тип БД и что именно генерировать -->
                         <database>
