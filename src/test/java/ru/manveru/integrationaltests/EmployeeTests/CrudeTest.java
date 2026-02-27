@@ -29,6 +29,7 @@ public class CrudeTest extends BaseDbTest{
     @Tag("Regress")
     public void testGetById() throws SQLException{
         Employee inDb = employeeRepo.findById(employeeRepo.ceate(new Employee("Test", "Testsonn", "JDBC", 1000)));
+        employeeRepo.create(entity)
         RequestParams params = RequestParams.get("/" + inDb.getId()).build();
         
         Response response = sendRequestStep(params, 200);
@@ -39,7 +40,8 @@ public class CrudeTest extends BaseDbTest{
 
         Allure.step("Записи в БД и в ответе идентичны", () -> assertThat(inDb).isEqualTo(fromRequest));
         
-        employeeRepo.delete(inDb.getId());
+        employeeRepo.deleteById(inDb.getId());
+        //employeeRepo.delete(inDb.getId());
     }
     
     @Test

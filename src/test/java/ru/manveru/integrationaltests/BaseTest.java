@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import ru.manveru.integrationaltests.Extentions.LoggingExtension;
 import ru.manveru.integrationaltests.Helpers.RestApiHelper;
 import ru.manveru.integrationaltests.Repositories.HikariConnectionPool;
+import ru.manveru.integrationaltests.Repositories.JooqRepositoryFactory;
 import ru.manveru.integrationaltests.Repositories.RepositoryFactory;
 
 @ExtendWith(LoggingExtension.class)
@@ -13,5 +14,6 @@ public class BaseTest {
     public static RestApiHelper apiHelper = RestApiHelper.getInstance();
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     //protected static final HikariConnectionPool connectionPool = new HikariConnectionPool();
-    public static RepositoryFactory factory = RepositoryFactory.getInstance();
+    //public static RepositoryFactory factory = RepositoryFactory.getInstance();
+    public static  JooqRepositoryFactory factory = JooqRepositoryFactory.getInstance("jdbc:postgresql://localhost:5432/my_db", "postgres", "WenCoda");
 }
