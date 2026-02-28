@@ -17,6 +17,7 @@ import ru.manveru.integrationaltests.Helpers.RequestParams;
 
 @Epic("Операции с числами")
 @Feature("Подсчёт сумм цифр числа. Негативные проверки.")
+@DisplayName("Сумма цифр числа. Негативные проверки.")
 public class DigitsCalculatorErrorTest extends BaseDigitTest{
 
     @Test

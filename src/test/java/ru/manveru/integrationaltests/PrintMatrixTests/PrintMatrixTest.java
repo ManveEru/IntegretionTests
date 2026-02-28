@@ -24,6 +24,7 @@ import ru.manveru.integrationaltests.Helpers.RequestParams;
 
 @Epic("Операции с числами")
 @Feature("Вывод чисел построчно")
+@DisplayName("Вывод чисел построчно")
 public class PrintMatrixTest extends BaseDigitTest{
     
     @ParameterizedTest(name = "[{index}] {2}")

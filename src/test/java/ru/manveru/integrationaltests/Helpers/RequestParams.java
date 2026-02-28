@@ -22,6 +22,21 @@ public class RequestParams {
     public Map<String, String> getQueryParams() { return queryParams; }
     public RequestType getType() { return type; }
     
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder("Query params:");
+        
+        if (this.endpoint != null)
+            sb.append(" endpoint = ").append(this.endpoint);
+        if (this.body != null)
+            sb.append(" body = ").append(this.body);
+        if (this.queryParams != null)
+            sb.append(" queryParams = ").append(this.queryParams);
+        if (this.type != null)
+            sb.append(" type = ").append(this.type);
+        return sb.toString();
+    }
+    
     // Builder класс
     public static class Builder {
         private String endpoint;

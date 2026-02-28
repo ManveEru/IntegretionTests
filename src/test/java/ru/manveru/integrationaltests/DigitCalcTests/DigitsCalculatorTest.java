@@ -18,7 +18,7 @@ import ru.manveru.integrationaltests.Helpers.RequestParams;
 
 @Epic("Операции с числами")
 @Feature("Подсчёт сумм цифр числа")
-
+@DisplayName("Сумма цифр числа")
 public class DigitsCalculatorTest extends BaseDigitTest{
 
     @Test
