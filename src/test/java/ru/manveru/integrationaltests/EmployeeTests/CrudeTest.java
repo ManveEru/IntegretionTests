@@ -17,10 +17,12 @@ import org.junit.jupiter.api.Test;
 import ru.manveru.integrationaltests.BaseDbTest;
 import static ru.manveru.integrationaltests.BaseTest.apiHelper;
 import ru.manveru.integrationaltests.DTO.Employee;
+import ru.manveru.integrationaltests.DTO.tables.pojos.employeesPojo;
 import ru.manveru.integrationaltests.Helpers.RequestParams;
 
 @Epic("Кадровый учёт")
 @Feature("Сотрудники")
+@DisplayName("Работа с таблицей Employees")
 public class CrudeTest extends BaseDbTest{
     
     @Test
@@ -28,18 +30,20 @@ public class CrudeTest extends BaseDbTest{
     @Description("Запрос данных о сотруднике по его id")
     @Tag("Regress")
     public void testGetById() throws SQLException{
-        Employee inDb = employeeRepo.findById(employeeRepo.ceate(new Employee("Test", "Testsonn", "JDBC", 1000)));
+        //Employee inDb = employeeRepo.findById(employeeRepo.ceate(new Employee("Test", "Testsonn", "JDBC", 1000)));
+        employeesPojo inDb = employeeRepo.create(new employeesPojo(null, "Test", "Testsonn", "JDBC", 1000));
         RequestParams params = RequestParams.get("/" + inDb.getId()).build();
         
         Response response = sendRequestStep(params, 200);
-        Employee fromRequest = response
+        employeesPojo fromRequest = response
                 .then()
                 .extract()
-                .as(Employee.class);
+                .as(employeesPojo.class);
 
         Allure.step("Записи в БД и в ответе идентичны", () -> assertThat(inDb).isEqualTo(fromRequest));
         
-        employeeRepo.delete(inDb.getId());
+        employeeRepo.deleteById(inDb.getId());
+        //employeeRepo.delete(inDb.getId());
     }
     
     @Test
@@ -47,14 +51,14 @@ public class CrudeTest extends BaseDbTest{
     @Description("Запрос всех записей")
     @Tag("Regress")
     public void testGet() throws SQLException{
-        List<Employee> inDb = employeeRepo.findAll();
+        List<employeesPojo> inDb = employeeRepo.findAll();
         
         RequestParams params = RequestParams.get("").build();
         Response response = sendRequestStep(params, 200);
-        List<Employee> fromRequest = response
+        List<employeesPojo> fromRequest = response
                 .then()
                 .extract()
-                .as(new TypeRef<List<Employee>>(){});
+                .as(new TypeRef<List<employeesPojo>>(){});
 
         Allure.step("Сравнение выборки по БД и из запроса", () -> assertThat(inDb).containsExactlyInAnyOrderElementsOf(fromRequest));
     }
@@ -64,24 +68,24 @@ public class CrudeTest extends BaseDbTest{
     @Description("Запрос создания данных, в ответе ожидается созданный объект")
     @Tag("Regress")
     public void testCreate() throws SQLException{
-        List<Employee> inDbBefore = employeeRepo.findAll();
+        List<employeesPojo> inDbBefore = employeeRepo.findAll();
         Employee newEmployee = new Employee("Frumpel", "Devol", "Trade", 1000000);
         RequestParams params = RequestParams.post("").withBody(newEmployee).build();
         
         Response response = sendRequestStep(params, 201);
-        Employee fromRequest = response
+        employeesPojo fromRequest = response
                 .then()
                 .extract()
-                .as(Employee.class);
-        List<Employee> inDbAfter = employeeRepo.findAll();
-        Employee inDb = employeeRepo.findById(fromRequest.getId());
+                .as(employeesPojo.class);
+        List<employeesPojo> inDbAfter = employeeRepo.findAll();
+        employeesPojo inDb = employeeRepo.findById(fromRequest.getId()).orElseThrow(() -> new AssertionError("Запись не найдена в БД после создания"));
         
         assertAll(
             () -> Allure.step("Количество в БД", () -> assertThat(inDbAfter.size()).isGreaterThan(inDbBefore.size())),
             () -> Allure.step("Наличие новой записи в БД", () -> assertThat(inDb).isNotNull()),
             () -> Allure.step("Записи в БД и в ответе идентичны", () -> assertThat(inDb).isEqualTo(fromRequest))
         );
-        employeeRepo.delete(inDb.getId());
+        employeeRepo.deleteById(inDb.getId());
     }
     
     @Test
@@ -89,23 +93,22 @@ public class CrudeTest extends BaseDbTest{
     @Description("Запрос изменения данных, в ответе ожидается изменённый объект")
     @Tag("Regress")
     public void testModify() throws SQLException{
-        Employee oldEmployee = employeeRepo.findById(employeeRepo.ceate(new Employee("Test", "Testsonn", "JDBC", 1000)));
-        Employee newEmployee = new Employee("NewName", oldEmployee.getSurname(), oldEmployee.getDepartment(), oldEmployee.getSalary());
-        RequestParams params = RequestParams.put("/" + oldEmployee.getId()).withBody(newEmployee).build();
+        //Employee oldEmployee = employeeRepo.findById(employeeRepo.ceate(new Employee("Test", "Testsonn", "JDBC", 1000)));
+        employeesPojo testEmployee = employeeRepo.create(new employeesPojo(null, "Test", "Testsonn", "JDBC", 1000));
+        testEmployee.setName("New Name");
+        RequestParams params = RequestParams.put("/" + testEmployee.getId()).withBody(testEmployee).build();
         
         Response response = sendRequestStep(params, 200);
-        Employee fromRequest = response
+        employeesPojo fromRequest = response
                 .then()
                 .extract()
-                .as(Employee.class);
-        newEmployee.setId(oldEmployee.getId());
-        Employee inDb = employeeRepo.findById(oldEmployee.getId());
+                .as(employeesPojo.class);
+        employeesPojo inDb = employeeRepo.findById(testEmployee.getId()).orElseThrow(() -> new AssertionError("Запись не найдена в БД после создания"));
         
-        assertAll(
-            () -> Allure.step("Записи в БД и в ответе идентичны", () -> assertThat(inDb).isEqualTo(fromRequest)),
-            () -> Allure.step("Записи в БД и в ответе идентичны", () -> assertThat(inDb).isEqualTo(newEmployee))
+        assertAll(() -> Allure.step("Записи в БД и в ответе идентичны", () -> assertThat(inDb).isEqualTo(fromRequest)),
+            () -> Allure.step("Запись в БД изменена", () -> assertThat(inDb).isEqualTo(testEmployee))
         );
-        employeeRepo.delete(oldEmployee.getId());
+        employeeRepo.deleteById(testEmployee.getId());
     }
     
     @Test
@@ -113,13 +116,14 @@ public class CrudeTest extends BaseDbTest{
     @Description("Запрос удаления данных о сотруднике по его id")
     @Tag("Regress")
     public void testDelete() throws SQLException{
-        Employee inDb = employeeRepo.findById(employeeRepo.ceate(new Employee("Test", "Testsonn", "JDBC", 1000)));
+        //Employee inDb = employeeRepo.findById(employeeRepo.ceate(new Employee("Test", "Testsonn", "JDBC", 1000)));
+        employeesPojo inDb = employeeRepo.create(new employeesPojo(null, "Test", "Testsonn", "JDBC", 1000));
         RequestParams params = RequestParams.delete("/" + inDb.getId()).build();
         
         sendRequestStep(params, 204);
         
-        Employee inDbAfter = employeeRepo.findById(inDb.getId());
-        Allure.step("Записи в БД и в ответе идентичны", () -> assertThat(inDbAfter).isNull());
+        employeesPojo inDbAfter = employeeRepo.findById(inDb.getId()).orElse(null);
+        Allure.step("Запись удалена из БД", () -> assertThat(inDbAfter).isNull());
     }
     
     @Step("Отправка запроса")

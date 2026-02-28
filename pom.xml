@@ -51,7 +51,7 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.24.2</version>
-             <scope>test</scope>
+            <scope>test</scope>
         </dependency>
         
         <!-- Allure JUnit 5 -->
@@ -105,11 +105,124 @@
             <artifactId>HikariCP</artifactId>
             <version>5.1.0</version>
         </dependency>
+        <!-- jOOQ -->
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.19.7</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Compiler Plugin -->
+            <plugin>
+                <!-- Maven плагин для генератора кода jOOQ -->
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>3.19.7</version>
+
+                <executions>
+                    <execution>
+                        <id>generate-jooq-sources</id>
+                        <!-- Привязываем генерацию кода к фазе generate-sources в Maven,
+                        чтобы при выполнении mvn compile код генерировался автоматически перед компиляцией -->
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <!-- ***** Конфигурация подключения к БД (используем ваши данные) ***** -->
+                    <jdbc>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5432/my_db</url>
+                        <user>postgres</user>
+                        <password>WenCoda</password>
+                    </jdbc>
+
+                    <!-- ***** Основная конфигурация генератора ***** -->
+                    <generator>
+                        <!-- Указываем, что генерируемый код будет на Java (это значение по умолчанию, но лучше указать явно) -->
+                        <name>org.jooq.codegen.JavaGenerator</name>
+                        
+                        <strategy>
+                            <name>org.jooq.codegen.DefaultGeneratorStrategy</name>
+                            <matchers>
+                                <tables>
+                                    <table>
+                                        <!-- Настройка для класса таблицы -->
+                                        <tableClass>
+                                            <expression>$0</expression>
+                                        </tableClass>
+                            
+                                        <!-- Настройка для POJO класса - добавляем суффикс Pojo -->
+                                        <pojoClass>
+                                            <expression>$0Pojo</expression>
+                                        </pojoClass>
+                            
+                                        <!-- Настройка для Record класса -->
+                                        <recordClass>
+                                            <expression>$0Record</expression>
+                                        </recordClass>
+                            
+                                        <!-- Настройка для DAO класса -->
+                                        <daoClass>
+                                            <expression>$0Dao</expression>
+                                        </daoClass>
+                                    </table>
+                                </tables>
+                            </matchers>
+                        </strategy>
+
+                        <!-- Конфигурация базы данных: указываем jOOQ тип БД и что именно генерировать -->
+                        <database>
+                            <!-- Диалект базы данных PostgreSQL -->
+                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
+
+                            <!-- Регулярное выражение, указывающее, какие объекты БД (таблицы, представления) включать.
+                            Здесь мы включаем только таблицу "Employees". Обратите внимание на регистр - он должен соответствовать реальному имени в БД. -->
+                            <includes>employees</includes>
+
+                            <!-- Указываем, что исключать не нужно -->
+                            <excludes></excludes>
+
+                            <!-- Схема (Schema) базы данных, обычно "public" -->
+                            <inputSchema>public</inputSchema>
+                        </database>
+
+                        <!-- ***** Опции генерации: управляем тем, какие типы кода создавать ***** -->
+                        <generate>
+                            <!-- Генерировать POJO классы (простые Java-объекты, содержащие только данные) -->
+                            <pojos>true</pojos>
+                            <!-- Генерировать Record классы, соответствующие записям в таблице. Это основа для работы с jOOQ -->
+                            <records>true</records>
+                            <!-- Генерировать DAO классы (объекты доступа к данным), которые предоставляют простые CRUD операции.
+                            Это очень полезно для ваших "базовых операций" -->
+                            <daos>true</daos>
+                        </generate>
+
+                        <!-- ***** Настройка целевой директории для сгенерированных файлов ***** -->
+                        <target>
+                            <!-- Пакет для сгенерированных классов, можете изменить под структуру вашего проекта -->
+                            <packageName>ru.manveru.integrationaltests.DTO</packageName>
+                            <!-- Директория для сгенерированного кода. Стандартная практика Maven - target/generated-sources/jooq -->
+                            <directory>target/generated-sources/jooq</directory>
+                        </target>
+                    </generator>
+                </configuration>
+
+                <!-- Добавляем драйвер PostgreSQL как зависимость плагина, чтобы генератор мог подключиться к БД -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <!-- Используйте версию, которая уже есть в вашем проекте, или укажите совместимую -->
+                        <version>42.7.3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
             <!-- Surefire Plugin for JUnit 5 -->
             <plugin>
